@@ -103,23 +103,22 @@ class BinarySearchTree:
         else:
             return self._find_successor_node(node.left, node)
 
-    def search(self, key):
-        current_node = self.root
+    def search(self, key, current_node: Node | None = None):
+        if current_node is None:
+            current_node = self.root
 
-        while current_node:
-            if key == current_node.data:
-                print("Key found", key)
-                return current_node
-            elif key < current_node.data:
-                if current_node.left is not None:
-                    current_node = current_node.left
-                else:
-                    raise ValueError("Key not found:", key)
-            else:
-                if current_node.right is not None:
-                    current_node = current_node.right
-                else:
-                    raise ValueError("Key not found:", key)
+        if key == current_node.data:
+            print("Key found:", key)
+            return current_node
+
+        if key < current_node.data:
+            if current_node.left is None:
+                raise ValueError("Key not found:", key)
+            return self.search(key, current_node.left)
+        else:
+            if current_node.right is None:
+                raise ValueError("Key not found:", key)
+            return self.search(key, current_node.right)
 
     @staticmethod
     def _is_leaf_node(node: Node):
@@ -203,3 +202,6 @@ tree.remove_node(3)
 tree.remove_node(13)
 tree.remove_node(18)
 tree.remove_node(4)
+
+tree.search(0)
+tree.search(5)

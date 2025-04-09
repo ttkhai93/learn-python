@@ -31,35 +31,28 @@ class BinarySearchTree:
             self.root = new_node
             return
 
-        current_node = self.root
-        while current_node:
-            if new_node == current_node:
-                raise ValueError("Binary search tree cannot have duplicate nodes")
-
-            if new_node < current_node:
-                # If current node doesn't have left child
-                if current_node.left is None:
-                    # New node become the left child node
-                    current_node.left = new_node
-                    # The process is completed, break the loop
-                    break
-
-                # If current node already have a left child
-                # Assign current_node with left child nodes, continue while loop with new node
-                current_node = current_node.left
-            else:
-                # If current node doesn't have right child
-                if current_node.right is None:
-                    # New node become the left child node
-                    current_node.right = new_node
-                    # The process is completed, break the loop
-                    break
-
-                # If current node already have a right child
-                # Assign current_node with right child nodes, continue while loop with new node
-                current_node = current_node.right
-
+        self._find_and_append_to_parent_node(new_node, self.root)
         self.print_tree_vertical()
+
+
+    def _find_and_append_to_parent_node(self, new_node: Node, current_node: Node):
+        if new_node == current_node:
+            raise ValueError("Binary search tree cannot have duplicate nodes")
+
+        if new_node < current_node:
+            if current_node.left is None:
+                # If current node doesn't have left child, new node become the left child node
+                current_node.left = new_node
+            else:
+                # If current node already have a left child, continue to traverse to the left side
+                self._find_and_append_to_parent_node(new_node, current_node.left)
+        else:
+            if current_node.right is None:
+                # If current node doesn't have right child, new node become the left child node
+                current_node.right = new_node
+            else:
+                # If current node already have a right child, continue to traverse to the right side
+                self._find_and_append_to_parent_node(new_node, current_node.right)
 
     def remove_node(self, key: int):
         print("remove node:", key)
@@ -184,7 +177,6 @@ class BinarySearchTree:
 tree = BinarySearchTree()
 tree.add_node(10)
 tree.add_node(1)
-
 tree.add_node(3)
 tree.add_node(5)
 tree.add_node(8)

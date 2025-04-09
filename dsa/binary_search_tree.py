@@ -1,5 +1,5 @@
 class Node:
-    def __init__(self, data):
+    def __init__(self, data: int):
         self.data = data
         self.left = None
         self.right = None
@@ -16,14 +16,17 @@ class Node:
     def __repr__(self):
         return str(self.data)
 
+
 class BinarySearchTree:
-    root: Node | None = None
+    root: Node | None
 
     def __init__(self):
         self.root = None
 
-    def add(self, new_node: Node):
+    def add_node(self, key: int):
+        new_node = Node(key)
         print("add node:", new_node)
+
         if self.root is None:
             self.root = new_node
             return
@@ -32,28 +35,40 @@ class BinarySearchTree:
         while current_node:
             if new_node == current_node:
                 raise ValueError("Binary search tree cannot have duplicate nodes")
-            elif new_node < current_node:
-                if current_node.left is not None:
-                    current_node = current_node.left
-                else:
+
+            if new_node < current_node:
+                # If current node doesn't have left child
+                if current_node.left is None:
+                    # New node become the left child node
                     current_node.left = new_node
+                    # The process is completed, break the loop
                     break
+
+                # If current node already have a left child
+                # Assign current_node with left child nodes, continue while loop with new node
+                current_node = current_node.left
             else:
-                if current_node.right is not None:
-                    current_node = current_node.right
-                else:
+                # If current node doesn't have right child
+                if current_node.right is None:
+                    # New node become the left child node
                     current_node.right = new_node
+                    # The process is completed, break the loop
                     break
+
+                # If current node already have a right child
+                # Assign current_node with right child nodes, continue while loop with new node
+                current_node = current_node.right
+
         self.print_tree_vertical()
 
-    def remove(self, key: int):
+    def remove_node(self, key: int):
         print("remove node:", key)
         parrent_node = None
         current_node = self.root
 
         while current_node:
             if key == current_node.data:
-                if current_node.left is None and current_node.right is None:
+                if self.is_leaf_node(current_node):
                     removed_node_replaced_by = None
                     if current_node < parrent_node:
                         parrent_node.left = removed_node_replaced_by
@@ -114,6 +129,10 @@ class BinarySearchTree:
                 else:
                     return print("Search result: Key not found", key)
 
+    @staticmethod
+    def is_leaf_node(node: Node):
+        return node.left is None and node.right is None
+
     def print_tree_vertical(self):
         """
         Prints the binary tree vertically (top-down representation).
@@ -163,29 +182,29 @@ class BinarySearchTree:
 
 
 tree = BinarySearchTree()
-tree.add(Node(10))
-tree.add(Node(1))
+tree.add_node(10)
+tree.add_node(1)
 
-tree.add(Node(3))
-tree.add(Node(5))
-tree.add(Node(8))
-tree.add(Node(9))
-tree.add(Node(7))
-tree.add(Node(4))
-tree.add(Node(2))
-tree.add(Node(0))
-tree.add(Node(15))
-tree.add(Node(13))
-tree.add(Node(14))
-tree.add(Node(18))
-tree.add(Node(19))
-tree.add(Node(17))
-tree.add(Node(11))
-tree.add(Node(12))
+tree.add_node(3)
+tree.add_node(5)
+tree.add_node(8)
+tree.add_node(9)
+tree.add_node(7)
+tree.add_node(4)
+tree.add_node(2)
+tree.add_node(0)
+tree.add_node(15)
+tree.add_node(13)
+tree.add_node(14)
+tree.add_node(18)
+tree.add_node(19)
+tree.add_node(17)
+tree.add_node(11)
+tree.add_node(12)
 
-tree.remove(5)
-tree.remove(7)
-tree.remove(3)
-tree.remove(13)
-tree.remove(18)
-tree.remove(4)
+tree.remove_node(5)
+tree.remove_node(7)
+tree.remove_node(3)
+tree.remove_node(13)
+tree.remove_node(18)
+tree.remove_node(4)

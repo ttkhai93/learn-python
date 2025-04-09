@@ -56,75 +56,78 @@ class BinarySearchTree:
 
     def remove_node(self, key: int):
         print("remove node:", key)
-        parrent_node = None
-        current_node = self.root
-
-        while current_node:
-            if key == current_node.data:
-                if self.is_leaf_node(current_node):
-                    removed_node_replaced_by = None
-                    if current_node < parrent_node:
-                        parrent_node.left = removed_node_replaced_by
-                    else:
-                        parrent_node.right = removed_node_replaced_by
-                elif current_node.left is not None and current_node.right is not None:
-                    # Use successor node ro replace removed node
-                    semi_successor = None
-                    successor = current_node.right
-                    while successor.left is not None:
-                        semi_successor = successor
-                        successor = successor.left
-
-                    current_node.data = successor.data
-                    if semi_successor is not None:
-                        semi_successor.left = None
-                    else:
-                        current_node.right = successor.right
-
-                else:
-                    removed_node_replaced_by = current_node.left if current_node.left is not None else current_node.right
-
-                    if current_node < parrent_node:
-                        parrent_node.left = removed_node_replaced_by
-                    else:
-                        parrent_node.right = removed_node_replaced_by
-
-                break
-            elif key < current_node.data:
-                if current_node.left is not None:
-                    parrent_node = current_node
-                    current_node = current_node.left
-                else:
-                    return print("Search result: Key not found", key)
-            else:
-                if current_node.right is not None:
-                    parrent_node = current_node
-                    current_node = current_node.right
-                else:
-                    return print("Search result: Key not found", key)
+        self._find_and_remove(key, None, self.root)
         self.print_tree_vertical()
+
+    def _find_and_remove(self, key: int, parent_node: Node | None, current_node: Node):
+        if key == current_node.data:
+            if self._is_leaf_node(current_node):
+                if current_node < parent_node:
+                    parent_node.left = None
+                else:
+                    parent_node.right = None
+            elif self._is_full_node(current_node):
+                successor_node, parent_node = self._find_successor_node(current_node.right)
+
+                # Remove link to successor node
+                # If successor node has parent => Remove link from parent to successor node
+                if parent_node is not None:
+                    parent_node.left = None
+                else: # Right child of successor node become right child of the current node
+                    current_node.right = successor_node.right
+
+                # Copy successor node data to current node
+                current_node.data = successor_node.data
+            else:
+                child_node = current_node.left if current_node.left is not None else current_node.right
+                if current_node < parent_node:
+                    parent_node.left = child_node
+                else:
+                    parent_node.right = child_node
+            return
+
+        if key < current_node.data:
+            if current_node.left is not None:
+                self._find_and_remove(key, current_node, current_node.left)
+            else:
+                raise ValueError("Key not found:", key)
+        else:
+            if current_node.right is not None:
+                self._find_and_remove(key, current_node, current_node.right)
+            else:
+                raise ValueError("Key not found:", key)
+
+    def _find_successor_node(self, node: Node, parent_node: Node | None = None):
+        if node.left is None:
+            return node, parent_node
+        else:
+            return self._find_successor_node(node.left, node)
 
     def search(self, key):
         current_node = self.root
 
         while current_node:
             if key == current_node.data:
-                print("Search result: Key found", key)
+                print("Key found", key)
                 return current_node
             elif key < current_node.data:
                 if current_node.left is not None:
                     current_node = current_node.left
                 else:
-                    return print("Search result: Key not found", key)
+                    raise ValueError("Key not found:", key)
             else:
                 if current_node.right is not None:
                     current_node = current_node.right
                 else:
-                    return print("Search result: Key not found", key)
+                    raise ValueError("Key not found:", key)
 
     @staticmethod
-    def is_leaf_node(node: Node):
+    def _is_leaf_node(node: Node):
         return node.left is None and node.right is None
+
+    @staticmethod
+    def _is_full_node(node: Node):
+        return node.left is not None and node.right is not None
 
     def print_tree_vertical(self):
         """

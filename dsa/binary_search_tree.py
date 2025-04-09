@@ -56,10 +56,10 @@ class BinarySearchTree:
 
     def remove_node(self, key: int):
         print("remove node:", key)
-        self._find_and_remove(key, None, self.root)
+        self._find_and_remove(key, self.root)
         self.print_tree_vertical()
 
-    def _find_and_remove(self, key: int, parent_node: Node | None, current_node: Node):
+    def _find_and_remove(self, key: int, current_node: Node, parent_node: Node | None = None):
         if key == current_node.data:
             if self._is_leaf_node(current_node):
                 if current_node < parent_node:
@@ -88,12 +88,12 @@ class BinarySearchTree:
 
         if key < current_node.data:
             if current_node.left is not None:
-                self._find_and_remove(key, current_node, current_node.left)
+                self._find_and_remove(key, current_node.left, current_node)
             else:
                 raise ValueError("Key not found:", key)
         else:
             if current_node.right is not None:
-                self._find_and_remove(key, current_node, current_node.right)
+                self._find_and_remove(key, current_node.right, current_node)
             else:
                 raise ValueError("Key not found:", key)
 
